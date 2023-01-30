@@ -1,6 +1,8 @@
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class Number {
     private int number;
@@ -10,15 +12,8 @@ public class Number {
     }
 
     public static void main(String[] args) {
-        Number alpha1 = new Number(10);
-        Number alpha2 = new Number(6);
-        Number prime1 = new Number(10);
-        Number prime2 = new Number(7);
-        System.out.println(alpha1.isPerfect());
-        System.out.println(alpha2.isPerfect());
-        System.out.println(prime1.isPrime());
-        System.out.println(prime2.isPrime());
-
+        String[] arr = {"perfect", "prime", "squared", "abundant", "deficient"};
+        Stream<String> stream = Arrays.stream(arr);
     }
 
     public Set<Integer> factors() {
@@ -59,15 +54,15 @@ public class Number {
         return number > 1 && factors().equals(primeSet);
     }
 
+    public boolean isSquared() {
+        return Math.sqrt(number) % 1 == 0;
+    }
+
     public boolean isAbundant() {
         return sum(factors()) - number > number;
     }
 
     public boolean isDeficient() {
         return sum(factors()) - number < number;
-    }
-
-    public boolean isSquared() {
-        return Math.sqrt(number) % 1 == 0;
     }
 }
