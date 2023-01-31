@@ -5,15 +5,37 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class Number {
-    private int number;
+    static int number;
 
-    public Number(int number) {
-        this.number = number;
+    public interface Calculator {
+        boolean pefrect = false;
+
+        boolean abundant = false;
+
+        boolean deficient = false;
+
+        boolean prime = false;
+
+        boolean square = false;
     }
 
+    public Number(int number) {
+        Number.number = number;
+    }
     public static void main(String[] args) {
-        String[] arr = {"perfect", "prime", "squared", "abundant", "deficient"};
-        Stream<String> stream = Arrays.stream(arr);
+        Calculator.pefrect = check -> sum(new Number(number).factors()) - number == number;
+        Calculator.abundant = check -> sum(factors()) - number > number;
+        Calculator.deficient = check -> sum(factors()) - number < number;
+        Calculator.prime = check -> {
+            Set<Integer> primeSet = new HashSet<>() {
+                {
+                    add(1);
+                    add(number);
+                }
+            };
+            number > 1 && factors().equals(primeSet);
+        };
+        Calculator.square = check -> Math.sqrt(number) % 1 == 0;
     }
 
     public Set<Integer> factors() {
@@ -31,7 +53,7 @@ public class Number {
         return number % potentialFactor == 0;
     }
 
-    static public int sum(Set<Integer> factors) {
+    public static int sum(Set<Integer> factors) {
         Iterator iterator = factors.iterator();
         int sum = 0;
         while (iterator.hasNext()) {
@@ -40,29 +62,29 @@ public class Number {
         return sum;
     }
 
-    public boolean isPerfect() {
-        return sum(factors()) - number == number;
-    }
-
-    public boolean isPrime() {
-        Set<Integer> primeSet = new HashSet<>() {
-            {
-                add(1);
-                add(number);
-            }
-        };
-        return number > 1 && factors().equals(primeSet);
-    }
-
-    public boolean isSquared() {
-        return Math.sqrt(number) % 1 == 0;
-    }
-
-    public boolean isAbundant() {
-        return sum(factors()) - number > number;
-    }
-
-    public boolean isDeficient() {
-        return sum(factors()) - number < number;
-    }
+//    public boolean isPerfect() {
+//        return sum(factors()) - number == number;
+//    }
+//
+//    public boolean isPrime() {
+//        Set<Integer> primeSet = new HashSet<>() {
+//            {
+//                add(1);
+//                add(number);
+//            }
+//        };
+//        return number > 1 && factors().equals(primeSet);
+//    }
+//
+//    public boolean isSquared() {
+//        return Math.sqrt(number) % 1 == 0;
+//    }
+//
+//    public boolean isAbundant() {
+//        return sum(factors()) - number > number;
+//    }
+//
+//    public boolean isDeficient() {
+//        return sum(factors()) - number < number;
+//    }
 }
