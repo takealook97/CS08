@@ -7,38 +7,33 @@ import java.util.stream.Stream;
 public class Number {
     static int number;
 
-    public interface Calculator {
-        boolean pefrect = false;
-
-        boolean abundant = false;
-
-        boolean deficient = false;
-
-        boolean prime = false;
-
-        boolean square = false;
-    }
-
     public Number(int number) {
         Number.number = number;
     }
-    public static void main(String[] args) {
-        Calculator.pefrect = check -> sum(factors()) - number == number;
-        Calculator.abundant = check -> sum(factors()) - number > number;
-        Calculator.deficient = check -> sum(factors()) - number < number;
-        Calculator.prime = check -> {
+
+    public interface Predicate<T> {
+        boolean check(T t);
+
+        Predicate<Boolean> isPerfect = check -> sum(factors()) - number == number;
+        Predicate<Boolean> isAbundant = check -> sum(factors()) - number > number;
+        Predicate<Boolean> isDeficient = check -> sum(factors()) - number < number;
+        Predicate<Boolean> isPrime = check -> {
             Set<Integer> primeSet = new HashSet<>() {
                 {
                     add(1);
                     add(number);
                 }
             };
-            number > 1 && factors().equals(primeSet);
+            return number > 1 && factors().equals(primeSet);
         };
-        Calculator.square = check -> Math.sqrt(number) % 1 == 0;
+        Predicate<Boolean> isSquared = check -> Math.sqrt(number) % 1 == 0;
     }
 
-    public Set<Integer> factors() {
+    public static void main(String[] args) {
+
+    }
+
+    public static Set<Integer> factors() {
         HashSet<Integer> factors = new HashSet<>();
         for (int pod = 1; pod <= Math.sqrt(number); pod++) {
             if (isFactor(pod)) {
@@ -49,7 +44,7 @@ public class Number {
         return factors;
     }
 
-    public boolean isFactor(int potentialFactor) {
+    public static boolean isFactor(int potentialFactor) {
         return number % potentialFactor == 0;
     }
 
