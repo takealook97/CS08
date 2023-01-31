@@ -23,7 +23,7 @@ public class Number {
         Number.number = number;
     }
     public static void main(String[] args) {
-        Calculator.pefrect = check -> sum(new Number(number).factors()) - number == number;
+        Calculator.pefrect = check -> sum(factors()) - number == number;
         Calculator.abundant = check -> sum(factors()) - number > number;
         Calculator.deficient = check -> sum(factors()) - number < number;
         Calculator.prime = check -> {
