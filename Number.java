@@ -1,85 +1,73 @@
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Number {
-    static int number;
-
-    public Number(int number) {
-        Number.number = number;
-    }
-
-    public interface Predicate<T> {
-        boolean check(T t);
-
-        Predicate<Boolean> isPerfect = check -> sum(factors()) - number == number;
-        Predicate<Boolean> isAbundant = check -> sum(factors()) - number > number;
-        Predicate<Boolean> isDeficient = check -> sum(factors()) - number < number;
-        Predicate<Boolean> isPrime = check -> {
-            Set<Integer> primeSet = new HashSet<>() {
-                {
-                    add(1);
-                    add(number);
-                }
-            };
-            return number > 1 && factors().equals(primeSet);
-        };
-        Predicate<Boolean> isSquared = check -> Math.sqrt(number) % 1 == 0;
-    }
+    private final Function<Integer, String> getType = number -> Stream.of(
+                    number + " : ",
+                    isPerfect(number) ? "perfect, " : "",
+                    isAbundant(number) ? "abundant, " : "",
+                    isDeficient(number) ? "deficient, " : "",
+                    isPrime(number) ? "prime, " : "",
+                    isSquared(number) ? "squared, " : ""
+            )
+            .reduce((a, b) -> a + b)
+            .map(a -> a.substring(0, a.length() - 2) + "\n")
+            .get();
 
     public static void main(String[] args) {
-
+        System.out.println(new Number().classifyNum());
     }
 
-    public static Set<Integer> factors() {
+
+    public Set<Integer> factors(int number) {
         HashSet<Integer> factors = new HashSet<>();
-        for (int pod = 1; pod <= Math.sqrt(number); pod++) {
-            if (isFactor(pod)) {
-                factors.add(pod);
-                factors.add(number / pod);
-            }
-        }
+        IntStream.range(1, (int) Math.sqrt((number)) + 1)
+                .filter(potentialFactor -> isFactor(number, potentialFactor))
+                .forEach(i -> {
+                    factors.add(number / i);
+                    factors.add(i);
+                });
         return factors;
     }
 
-    public static boolean isFactor(int potentialFactor) {
+    static public int sum(Set<Integer> factors) {
+        return factors.stream().reduce(0, Integer::sum);
+    }
+    public boolean isFactor(int number, int potentialFactor) {
         return number % potentialFactor == 0;
     }
-
-    public static int sum(Set<Integer> factors) {
-        Iterator iterator = factors.iterator();
-        int sum = 0;
-        while (iterator.hasNext()) {
-            sum += (Integer) iterator.next();
-        }
-        return sum;
+    public boolean isPerfect(int number) {
+        return sum(factors(number)) - number == number;
     }
 
-//    public boolean isPerfect() {
-//        return sum(factors()) - number == number;
-//    }
-//
-//    public boolean isPrime() {
-//        Set<Integer> primeSet = new HashSet<>() {
-//            {
-//                add(1);
-//                add(number);
-//            }
-//        };
-//        return number > 1 && factors().equals(primeSet);
-//    }
-//
-//    public boolean isSquared() {
-//        return Math.sqrt(number) % 1 == 0;
-//    }
-//
-//    public boolean isAbundant() {
-//        return sum(factors()) - number > number;
-//    }
-//
-//    public boolean isDeficient() {
-//        return sum(factors()) - number < number;
-//    }
+    public boolean isAbundant(int number) {
+        return sum(factors(number)) - number > number;
+    }
+
+    public boolean isDeficient(int number) {
+        return sum(factors(number)) - number < number;
+    }
+
+    public boolean isPrime(int number) {
+        Set<Integer> primeSet = new HashSet<>() {
+            {
+                add(1);
+                add(number);
+            }
+        };
+        return number > 1 && factors(number).equals(primeSet);
+    }
+
+    public boolean isSquared(int number) {
+        return Math.sqrt(number) % 1 == 0;
+    }
+
+
+    public String classifyNum() {
+        return IntStream.range(2, 101)
+                .mapToObj(getType::apply).reduce((a, b) -> a + b).get();
+    }
 }
